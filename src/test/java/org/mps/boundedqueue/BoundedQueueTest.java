@@ -2,7 +2,7 @@ package org.mps.boundedqueue;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import java.util.NoSuchElementException;
 import java.util.Iterator;
 
 import static org.assertj.core.api.Assertions.*;
@@ -102,6 +102,24 @@ class ArrayBoundedQueueTest {
 
         Iterator<String> iterator = queue.iterator();
         assertThat(iterator).toIterable().containsExactly("A", "B", "C");
+    }
+
+    @Test
+    void iteratorNextShouldThrowNoSuchElementExceptionWhenExhausted() {
+        
+        queue.put("Uno");
+        queue.put("Dos");
+        Iterator<String> iterator = queue.iterator();
+
+        assertThat(iterator.hasNext()).isTrue();
+        assertThat(iterator.next()).isEqualTo("Uno");
+        assertThat(iterator.hasNext()).isTrue();
+        assertThat(iterator.next()).isEqualTo("Dos");
+
+        assertThat(iterator.hasNext()).isFalse();
+
+        assertThatThrownBy(() -> iterator.next())
+            .isInstanceOf(NoSuchElementException.class);
     }
 
     @Test
